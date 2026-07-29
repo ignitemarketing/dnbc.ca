@@ -1,0 +1,130 @@
+
+<!-- header file -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+<head>
+
+<title>Nissan / Datsun Enthusiasts of BC</title>
+
+
+
+<link rel="stylesheet" media="all" type="text/css" href="/dnbc.css" />
+
+
+
+<style type="text/css">
+
+<!--
+
+.style4 {color: #999999}
+
+.style6 {color: #666666}
+
+
+
+-->
+
+</style>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+</head>
+
+
+
+<body>
+
+<table width="750" border="0" align="center" cellpadding="0" cellspacing="0">
+
+  <tr>
+
+    <td><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+
+      <tr>
+
+        <td><a href="index.php"><img src="/images/header.gif" width="750" height="104" border=0></a></td>
+
+      </tr>
+
+      <tr>
+
+        <td height="26" background="/images/navbarbg.gif" bgcolor="#CCCCCC"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+
+          <tr class="navbar">
+
+            <td width="48%">&nbsp;</td>
+
+            <td width="13%" align="center"><a href="/index.php">HOME</a></td>
+
+            <td width="13%" align="center"><a href="/pictures.php">PICTURES</a></td>
+
+            <td width="13%" align="center"><a href="/sponsors.php">SPONSORS</a></td>
+
+            <td width="13%" align="center"><a href="/clubs.php">CLUBS</a></td>
+
+            <td width="13%" align="center"><a href="/contact.php">CONTACT</a></td>
+
+          </tr>
+
+        </table></td>
+
+      </tr>
+
+      <tr>
+
+        <td bgcolor="#FFFFFF"><img src="/images/2006show_frontpage.jpg" width="750" height="160"></td>
+
+      </tr>
+
+
+
+
+
+<!-- content -->
+      <tr>
+        <td bgcolor="#FFFFFF">
+		<table width="100%"  border="0" cellspacing="0" cellpadding="25">
+          <tr>
+            <td valign="top"><h2><img src="images/bullet.gif" width="12" height="12"> Sponsors </h2>
+              <p> <span class="bodycopy" style="font-weight: bold"><br>
+                Pan Pacific Nissan</span><span class="bodycopy"><br>
+                Richmond Automall<br>
+                <a href="http://www.richmondnissan.com/">Website</a></span></p>
+              <p>&nbsp;</p></td>
+            <td width="50%" valign="top"><p>&nbsp;</p>
+              <p><span class="bodycopy" style="font-weight: bold"><a href="http://www.terra2imports.ca"><img src="images/sponsor_t2.jpg" width="189" height="155" border="0"></a><br>
+              </span><span class="bodycopy" style="font-weight: bold">Terra2 Imports</span><span class="bodycopy"><br>
+Japanese Vehicle Importers<br>
+Based in Vernon, BC <br>
+<a href="http://www.terra2imports.ca">Website</a></span></p></td>
+          </tr></table>
+</td>
+      </tr>
+<!-- content -->
+
+<!-- footer file -->
+
+
+      <tr>
+
+        <td><img src="images/footer.gif" width="750" height="43">
+
+		      <p class="bodycopy" align="center">Z 510 SX Enthusiast of British Columbia doing business as &quot;DNBC&quot; <br>
+
+        Copyright 2002-2010 - All Rights Reserved</p>
+
+</td>
+
+      </tr>
+
+	  </table>
+
+      <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"2dab4df2b86d424bbc268913f4114a8a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+</html>
+

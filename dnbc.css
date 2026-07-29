@@ -1,0 +1,100 @@
+.navbar {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+
+	font-size: 12px;
+
+	font-weight: bold;
+
+	color: #666666;
+
+}
+
+body {
+
+	background-color: #285577;
+
+}
+
+.navbar a {
+
+	text-decoration: none;	
+
+}	
+
+	
+
+a:link {
+
+	color: #666666;
+
+}
+
+a:visited {
+
+	color: #666666;
+
+}
+
+a:hover {
+
+	color: #0000FF;
+
+}
+
+a:active {
+
+	color: #FFFFFF;
+
+}
+
+h1 {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+
+	font-size: 18px;
+
+	color: #666666;
+
+}
+
+h2 {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+
+	font-size: 16px;
+
+	color: #666666;
+
+}
+
+h3 {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+
+	font-size: 14px;
+
+	color: #666666;
+
+}
+
+
+
+.bodycopy {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+
+	font-size: 10px;
+
+}
+
+.bodycopy a {
+
+	color: #0000FF;
+
+}.tableborder {
+
+	border: thin solid #666666;
+
+}
+
