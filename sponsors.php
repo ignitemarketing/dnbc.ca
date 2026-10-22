@@ -93,14 +93,14 @@
               <p> <span class="bodycopy" style="font-weight: bold"><br>
                 Pan Pacific Nissan</span><span class="bodycopy"><br>
                 Richmond Automall<br>
-                <a href="http://www.richmondnissan.com/">Website</a></span></p>
+                </span></p>
               <p>&nbsp;</p></td>
             <td width="50%" valign="top"><p>&nbsp;</p>
-              <p><span class="bodycopy" style="font-weight: bold"><a href="http://www.terra2imports.ca"><img src="images/sponsor_t2.jpg" width="189" height="155" border="0"></a><br>
+              <p><span class="bodycopy" style="font-weight: bold"><a href="https://www.terra2imports.ca" rel="sponsored noopener"><img src="images/sponsor_t2.jpg" width="189" height="155" border="0"></a><br>
               </span><span class="bodycopy" style="font-weight: bold">Terra2 Imports</span><span class="bodycopy"><br>
 Japanese Vehicle Importers<br>
 Based in Vernon, BC <br>
-<a href="http://www.terra2imports.ca">Website</a></span></p></td>
+<a href="https://www.terra2imports.ca" rel="sponsored noopener">Website</a></span></p></td>
           </tr></table>
 </td>
       </tr>
