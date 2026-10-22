@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Only HTML documents that this tree actually serves are listed here. The
+  PICTURES / SPONSORS / CLUBS / CONTACT pages are still .php files, which the
+  host returns as application/x-httpd-php rather than text/html, so they are
+  deliberately not advertised to crawlers until ignitemarketing/dnbc.ca#1
+  serves them as HTML. Add them here in the same change that fixes their
+  content type.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://dnbc.ca/</loc>
+  </url>
+</urlset>
