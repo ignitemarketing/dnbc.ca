@@ -58,7 +58,7 @@
 
       <tr>
 
-        <td height="26" background="/images/navbarbg.gif" bgcolor="#CCCCCC"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+        <td height="26" bgcolor="#CCCCCC"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
 
           <tr class="navbar">
 
