@@ -236,15 +236,15 @@ General admission for the to the Car Show is free, no registration required, jus
 
   Richmond Auto Mall<br>
 <br/>
-  "Looking for a <a href="http://www.richmondnissan.com/">Nissan in Richmond</a>? We proudly support local enthusiasts."</span>              </p>
-              <p><span class="bodycopy" style="font-weight: bold"><a href="http://www.terra2imports.ca">              </a>Terra2 Imports</span><span class="bodycopy"><br>
+  "Looking for a Nissan in Richmond? We proudly support local enthusiasts."</span>              </p>
+              <p><span class="bodycopy" style="font-weight: bold">Terra2 Imports</span><span class="bodycopy"><br>
 
   Japanese Vehicle Importing Specialists<br>
 <br/>
 
-  "Take a look at our classic and sporty <a href="http://www.terra2imports.ca">JDM Nissans</a>."</span></p>
+  "Take a look at our classic and sporty <a href="https://www.terra2imports.ca" rel="sponsored noopener">JDM Nissans</a>."</span></p>
 
-<p><a href="https://www.jdmbuysell.com/jdm-car-buying-guides/nissan-skyline/">Nissan Skyline GT-R Buying Guide</a>
+<p><a href="https://www.jdmbuysell.com/jdm-car-buying-guides/nissan-skyline/" rel="nofollow noopener">Nissan Skyline GT-R Buying Guide</a>
 
   </td>
 
