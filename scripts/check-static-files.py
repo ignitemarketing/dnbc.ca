@@ -3,7 +3,9 @@
 
 Covers the files added for ignitemarketing/dnbc.ca#3 (404.html, robots.txt,
 sitemap.xml, favicon.ico) and the removal of the missing navbar background
-reference. Runs on stdlib only: python3 scripts/check-static-files.py
+reference, plus the plain-HTML conversion: no .php files, every local
+reference resolves, and every _redirects rule lands on a real page.
+Runs on stdlib only: python3 scripts/check-static-files.py
 """
 import os
 import re
@@ -13,7 +15,9 @@ import xml.etree.ElementTree as ET
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITEMAP_NS = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
-REQUIRED = ("404.html", "robots.txt", "sitemap.xml", "favicon.ico")
+REQUIRED = ("404.html", "robots.txt", "sitemap.xml", "favicon.ico", "_redirects")
+# Paths Cloudflare itself serves on the live host (email obfuscation script).
+HOST_PATHS = ("/cdn-cgi/",)
 
 failures = []
 
@@ -150,6 +154,54 @@ def check_no_missing_images():
                  % rel)
 
 
+def html_pages():
+    return sorted(f for f in os.listdir(ROOT) if f.endswith(".html"))
+
+
+def check_no_php():
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+        for name in filenames:
+            if name.endswith(".php"):
+                fail("%s is a .php file; the site is plain HTML"
+                     % os.path.relpath(os.path.join(dirpath, name), ROOT))
+
+
+def check_local_refs():
+    pattern = re.compile(r'(?:src|href|action|background)="([^"]*)"', re.I)
+    for rel in html_pages():
+        for ref in pattern.findall(read(rel).decode("iso-8859-1")):
+            if re.match(r"^(?:[a-z][a-z0-9+.-]*:|#)", ref, re.I):
+                continue
+            url_path = ref.split("#")[0].split("?")[0]
+            if not url_path.startswith("/"):
+                url_path = "/" + url_path
+            if url_path.startswith(HOST_PATHS):
+                continue
+            if url_path.endswith(".php"):
+                fail("%s links to %r; link the .html page by its clean path" % (rel, ref))
+            elif resolve(url_path) is None:
+                fail("%s references %r, which does not exist in this tree" % (rel, ref))
+
+
+def check_redirects():
+    if not os.path.isfile(path("_redirects")):
+        return
+    for n, line in enumerate(read("_redirects").decode("utf-8").splitlines(), 1):
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        if len(parts) != 3 or parts[2] != "301":
+            fail("_redirects line %d is not 'source target 301': %r" % (n, line))
+            continue
+        source, target = parts[0], parts[1]
+        if resolve(source) is not None:
+            fail("_redirects line %d redirects %s, which is a real file" % (n, source))
+        if resolve(target) is None:
+            fail("_redirects line %d targets %s, which does not exist" % (n, target))
+
+
 def main():
     check_required()
     check_robots()
@@ -157,12 +209,15 @@ def main():
     check_favicon()
     check_404()
     check_no_missing_images()
+    check_no_php()
+    check_local_refs()
+    check_redirects()
     if failures:
         for msg in failures:
             print("FAIL %s" % msg)
         print("%d failure(s)" % len(failures))
         return 1
-    print("OK %d checks passed" % 6)
+    print("OK %d checks passed" % 9)
     return 0
 
 
