@@ -218,6 +218,17 @@ def check_no_injected_scripts():
             fail("%s carries a copy of a Cloudflare-injected script or email span" % rel)
 
 
+def check_emails_unscrambled():
+    # Cloudflare's edge email obfuscation turns a bare address outside a link
+    # into <a href="/cdn-cgi/l/email-protection">, which crawlers report as a
+    # 404. Every address sits inside <!--email_off--> ... <!--/email_off-->.
+    for rel in html_pages():
+        text = read(rel).decode("iso-8859-1")
+        text = re.sub(r"<!--email_off-->.*?<!--/email_off-->", "", text, flags=re.S)
+        for addr in re.findall(r"[\w.+-]+@[\w-]+\.[\w.-]+", text):
+            fail("%s shows %s outside <!--email_off-->" % (rel, addr))
+
+
 def main():
     check_required()
     check_robots()
@@ -230,12 +241,13 @@ def main():
     check_redirects()
     check_links_followed()
     check_no_injected_scripts()
+    check_emails_unscrambled()
     if failures:
         for msg in failures:
             print("FAIL %s" % msg)
         print("%d failure(s)" % len(failures))
         return 1
-    print("OK %d checks passed" % 11)
+    print("OK %d checks passed" % 12)
     return 0
 
 
