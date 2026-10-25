@@ -1,0 +1,11 @@
+# Old PHP URLs. The site is plain HTML; Pages serves /name.html at /name.
+/index.php                  /           301
+/pictures.php               /pictures   301
+/sponsors.php               /sponsors   301
+/clubs.php                  /clubs      301
+/register.php               /register   301
+/classes.php                /classes    301
+/register_signup.php        /register   301
+/register_statuscheck.php   /register   301
+/register_statuscheck2.php  /register   301
+/contact.php                /           301
