@@ -14,6 +14,7 @@ import re
 import struct
 import sys
 import xml.etree.ElementTree as ET
+from html.parser import HTMLParser
 
 ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public")
 SITEMAP_NS = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
@@ -167,10 +168,31 @@ def check_no_php():
                      % os.path.relpath(os.path.join(dirpath, name), ROOT))
 
 
+class TagCollector(HTMLParser):
+    """Every start tag with its attributes, however they are quoted or spaced."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.tags = []
+
+    def handle_starttag(self, tag, attrs):
+        self.tags.append((tag, attrs, self.get_starttag_text()))
+
+    handle_startendtag = handle_starttag
+
+
+def page_tags(rel):
+    collector = TagCollector()
+    collector.feed(read(rel).decode("iso-8859-1"))
+    collector.close()
+    return collector.tags
+
+
 def check_local_refs():
-    pattern = re.compile(r'(?:src|href|action|background)="([^"]*)"', re.I)
     for rel in html_pages():
-        for ref in pattern.findall(read(rel).decode("iso-8859-1")):
+        refs = [value for _, attrs, _ in page_tags(rel) for name, value in attrs
+                if name in ("src", "href", "action", "background") and value]
+        for ref in refs:
             if re.match(r"^(?:[a-z][a-z0-9+.-]*:|#)", ref, re.I):
                 continue
             url_path = ref.split("#")[0].split("?")[0]
@@ -202,11 +224,12 @@ def check_redirects():
 
 def check_links_followed():
     for rel in html_pages():
-        text = read(rel).decode("iso-8859-1")
-        for tag in re.findall(r"<a\s[^>]*>", text, re.I):
-            m = re.search(r'\srel="([^"]*)"', tag, re.I)
-            if m and set(m.group(1).lower().split()) & {"nofollow", "sponsored", "ugc"}:
-                fail("%s has a link that is not followed: %s" % (rel, tag))
+        for tag, attrs, raw in page_tags(rel):
+            if tag != "a":
+                continue
+            values = " ".join(value or "" for name, value in attrs if name == "rel")
+            if set(values.lower().split()) & {"nofollow", "sponsored", "ugc"}:
+                fail("%s has a link that is not followed: %s" % (rel, raw))
 
 
 def check_no_injected_scripts():
