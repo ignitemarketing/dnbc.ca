@@ -4,7 +4,9 @@
 Covers the files added for ignitemarketing/dnbc.ca#3 (404.html, robots.txt,
 sitemap.xml, favicon.ico) and the removal of the missing navbar background
 reference, plus the plain-HTML conversion: no .php files, every local
-reference resolves, and every _redirects rule lands on a real page.
+reference resolves, and every _redirects rule lands on a real page. Links
+stay followed, and no page carries a copy of a script Cloudflare injects.
+The site lives in public/, the directory deploy.yml publishes.
 Runs on stdlib only: python3 scripts/check-static-files.py
 """
 import os
@@ -13,11 +15,9 @@ import struct
 import sys
 import xml.etree.ElementTree as ET
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public")
 SITEMAP_NS = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
 REQUIRED = ("404.html", "robots.txt", "sitemap.xml", "favicon.ico", "_redirects")
-# Paths Cloudflare itself serves on the live host (email obfuscation script).
-HOST_PATHS = ("/cdn-cgi/",)
 
 failures = []
 
@@ -176,8 +176,6 @@ def check_local_refs():
             url_path = ref.split("#")[0].split("?")[0]
             if not url_path.startswith("/"):
                 url_path = "/" + url_path
-            if url_path.startswith(HOST_PATHS):
-                continue
             if url_path.endswith(".php"):
                 fail("%s links to %r; link the .html page by its clean path" % (rel, ref))
             elif resolve(url_path) is None:
@@ -202,6 +200,24 @@ def check_redirects():
             fail("_redirects line %d targets %s, which does not exist" % (n, target))
 
 
+def check_links_followed():
+    for rel in html_pages():
+        text = read(rel).decode("iso-8859-1")
+        for tag in re.findall(r"<a\s[^>]*>", text, re.I):
+            m = re.search(r'\srel="([^"]*)"', tag, re.I)
+            if m and set(m.group(1).lower().split()) & {"nofollow", "sponsored", "ugc"}:
+                fail("%s has a link that is not followed: %s" % (rel, tag))
+
+
+def check_no_injected_scripts():
+    # Cloudflare injects its analytics beacon and email decoder itself; a
+    # copy saved into the source double-loads or points at a dead endpoint.
+    pattern = re.compile(r"cloudflareinsights\.com|/cdn-cgi/|__cf_email__")
+    for rel in html_pages():
+        if pattern.search(read(rel).decode("iso-8859-1")):
+            fail("%s carries a copy of a Cloudflare-injected script or email span" % rel)
+
+
 def main():
     check_required()
     check_robots()
@@ -212,12 +228,14 @@ def main():
     check_no_php()
     check_local_refs()
     check_redirects()
+    check_links_followed()
+    check_no_injected_scripts()
     if failures:
         for msg in failures:
             print("FAIL %s" % msg)
         print("%d failure(s)" % len(failures))
         return 1
-    print("OK %d checks passed" % 9)
+    print("OK %d checks passed" % 11)
     return 0
 
 
