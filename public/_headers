@@ -1,0 +1,9 @@
+# Cloudflare Pages response headers. Inline <style> blocks and style="" attributes
+# are still in the pages, so style-src keeps 'unsafe-inline'; scripts are not
+# allowed inline. The analytics beacon Cloudflare injects loads from
+# static.cloudflareinsights.com.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000
