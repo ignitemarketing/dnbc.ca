@@ -272,7 +272,9 @@ def check_headers():
     # not carry any, or the browser would silently drop them.
     for rel in html_pages():
         for tag, attrs, raw in page_tags(rel):
-            if tag == "script" and not any(n == "src" for n, _ in attrs):
+            # JSON-LD is data, not script: the policy does not apply to it.
+            if tag == "script" and not any(n == "src" or (n == "type" and v == "application/ld+json")
+                                           for n, v in attrs):
                 fail("%s has an inline <script>, which the Content-Security-Policy blocks" % rel)
             for name, _ in attrs:
                 if name.startswith("on"):
@@ -310,7 +312,8 @@ def main():
             print("FAIL %s" % msg)
         print("%d failure(s)" % len(failures))
         return 1
-    print("OK %d checks passed" % 13)
+    print("OK %d checks passed" % sum(
+        1 for name, fn in globals().items() if name.startswith("check_") and callable(fn)))
     return 0
 
 
