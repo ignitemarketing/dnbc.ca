@@ -98,3 +98,14 @@ h3 {
 
 }
 
+
+/* Fixed 750px page that shrinks on narrow screens. */
+table.page {
+	width: 750px;
+	max-width: 100%;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
