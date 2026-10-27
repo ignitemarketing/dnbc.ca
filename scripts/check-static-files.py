@@ -136,10 +136,8 @@ def check_404():
     try:
         text = raw.decode("ascii")
     except UnicodeDecodeError as exc:
-        fail("404.html is not ASCII although it declares iso-8859-1: %s" % exc)
+        fail("404.html is not ASCII: %s" % exc)
         text = raw.decode("utf-8", "replace")
-    if 'charset=iso-8859-1' not in text:
-        fail("404.html does not declare the site's iso-8859-1 charset")
     if not re.search(r'href="/"', text):
         fail("404.html carries no link back to the site root")
     for ref in re.findall(r'(?:src|href)="(/[^"]*)"', text):
@@ -243,6 +241,52 @@ def check_no_injected_scripts():
             fail("%s carries a copy of a Cloudflare-injected script or email span" % rel)
 
 
+def check_onpage():
+    """Charset, language, viewport, unique title and description, canonical URL."""
+    sitemap_locs = set(re.findall(r"<loc>([^<]*)</loc>", read("sitemap.xml").decode("utf-8")))
+    titles = {}
+    for rel in html_pages():
+        tags = page_tags(rel)
+
+        def metas(**want):
+            return [attrs for tag, attrs, _ in tags if tag == "meta"
+                    and all(dict(attrs).get(k) == v for k, v in want.items())]
+
+        def meta_content(name):
+            found = metas(name=name)
+            return dict(found[0]).get("content", "").strip() if found else ""
+
+        html_tag = [dict(attrs) for tag, attrs, _ in tags if tag == "html"]
+        if not html_tag or not html_tag[0].get("lang"):
+            fail("%s has no <html lang>" % rel)
+        if not metas(charset="utf-8"):
+            fail('%s does not declare <meta charset="utf-8">' % rel)
+        if metas(**{"http-equiv": "Content-Type"}):
+            fail("%s still carries a Content-Type http-equiv meta" % rel)
+        if "width=device-width" not in meta_content("viewport"):
+            fail("%s has no responsive viewport meta" % rel)
+        if any(tag == "table" and dict(attrs).get("width") == "750" for tag, attrs, _ in tags):
+            fail('%s has a fixed <table width="750">; use class="page"' % rel)
+        title = " ".join("".join(
+            re.findall(r"<title>(.*?)</title>", read(rel).decode("iso-8859-1"), re.S)).split())
+        if not title:
+            fail("%s has no <title>" % rel)
+        titles.setdefault(title, []).append(rel)
+        canonical = [dict(attrs).get("href") for tag, attrs, _ in tags
+                     if tag == "link" and dict(attrs).get("rel") == "canonical"]
+        if rel == "404.html":
+            continue
+        if not meta_content("description"):
+            fail("%s has no meta description" % rel)
+        if len(canonical) != 1:
+            fail("%s must carry exactly one rel=canonical link, found %d" % (rel, len(canonical)))
+        elif canonical[0] not in sitemap_locs:
+            fail("%s canonical %r is not a sitemap.xml URL" % (rel, canonical[0]))
+    for title, rels in titles.items():
+        if len(rels) > 1:
+            fail("%s share the title %r" % (", ".join(rels), title))
+
+
 def check_headers():
     if not os.path.isfile(path("_headers")):
         return
@@ -303,6 +347,7 @@ def main():
     check_no_php()
     check_local_refs()
     check_redirects()
+    check_onpage()
     check_links_followed()
     check_no_injected_scripts()
     check_emails_unscrambled()
