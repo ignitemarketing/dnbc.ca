@@ -18,7 +18,9 @@ from html.parser import HTMLParser
 
 ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public")
 SITEMAP_NS = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
-REQUIRED = ("404.html", "robots.txt", "sitemap.xml", "favicon.ico", "_redirects")
+REQUIRED = ("404.html", "robots.txt", "sitemap.xml", "favicon.ico", "_redirects", "_headers")
+SECURITY_HEADERS = ("Content-Security-Policy", "X-Frame-Options", "Permissions-Policy",
+                    "Strict-Transport-Security")
 
 failures = []
 
@@ -241,6 +243,45 @@ def check_no_injected_scripts():
             fail("%s carries a copy of a Cloudflare-injected script or email span" % rel)
 
 
+def check_headers():
+    if not os.path.isfile(path("_headers")):
+        return
+    lines = [l.rstrip() for l in read("_headers").decode("utf-8").splitlines()
+             if l.strip() and not l.lstrip().startswith("#")]
+    if not lines or lines[0] != "/*":
+        fail("_headers must start with a '/*' rule, found %r" % (lines[:1],))
+        return
+    values = {}
+    for line in lines[1:]:
+        if not line.startswith((" ", "\t")) or ":" not in line:
+            fail("_headers line %r is not an indented 'Name: value' header" % line)
+            continue
+        name, value = line.strip().split(":", 1)
+        values[name.strip()] = value.strip()
+    for name in SECURITY_HEADERS:
+        if not values.get(name):
+            fail("_headers does not set %s" % name)
+    csp = values.get("Content-Security-Policy", "")
+    for directive in ("default-src", "frame-ancestors", "base-uri", "form-action"):
+        if not re.search(r"(?:^|;)\s*%s " % directive, csp):
+            fail("Content-Security-Policy has no %s directive" % directive)
+    script_src = re.search(r"(?:^|;)\s*script-src ([^;]*)", csp)
+    if script_src and "'unsafe-inline'" in script_src.group(1):
+        fail("Content-Security-Policy allows inline scripts")
+    # The policy forbids inline scripts and event handlers, so the pages must
+    # not carry any, or the browser would silently drop them.
+    for rel in html_pages():
+        for tag, attrs, raw in page_tags(rel):
+            # JSON-LD is data, not script: the policy does not apply to it.
+            if tag == "script" and not any(n == "src" or (n == "type" and v == "application/ld+json")
+                                           for n, v in attrs):
+                fail("%s has an inline <script>, which the Content-Security-Policy blocks" % rel)
+            for name, _ in attrs:
+                if name.startswith("on"):
+                    fail("%s has the event handler %s, which the Content-Security-Policy blocks"
+                         % (rel, name))
+
+
 def check_emails_unscrambled():
     # Cloudflare's edge email obfuscation turns a bare address outside a link
     # into <a href="/cdn-cgi/l/email-protection">, which crawlers report as a
@@ -265,12 +306,14 @@ def main():
     check_links_followed()
     check_no_injected_scripts()
     check_emails_unscrambled()
+    check_headers()
     if failures:
         for msg in failures:
             print("FAIL %s" % msg)
         print("%d failure(s)" % len(failures))
         return 1
-    print("OK %d checks passed" % 12)
+    print("OK %d checks passed" % sum(
+        1 for name, fn in globals().items() if name.startswith("check_") and callable(fn)))
     return 0
 
 
