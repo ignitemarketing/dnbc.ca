@@ -296,12 +296,20 @@ def check_headers():
         fail("_headers must start with a '/*' rule, found %r" % (lines[:1],))
         return
     values = {}
+    rules = {"/*": values}
+    current = values
     for line in lines[1:]:
-        if not line.startswith((" ", "\t")) or ":" not in line:
+        if not line.startswith((" ", "\t")):
+            current = rules.setdefault(line.strip(), {})
+            continue
+        if ":" not in line:
             fail("_headers line %r is not an indented 'Name: value' header" % line)
             continue
         name, value = line.strip().split(":", 1)
-        values[name.strip()] = value.strip()
+        current[name.strip()] = value.strip()
+    pages_dev = rules.get("https://:project.pages.dev/*", {})
+    if pages_dev.get("X-Robots-Tag") != "noindex":
+        fail("_headers must send X-Robots-Tag: noindex on https://:project.pages.dev/*")
     for name in SECURITY_HEADERS:
         if not values.get(name):
             fail("_headers does not set %s" % name)

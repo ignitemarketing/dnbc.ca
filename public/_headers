@@ -7,3 +7,8 @@
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000
+
+# Keep the Pages default host and its preview subdomains out of search results;
+# https://dnbc.ca is the canonical host.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
